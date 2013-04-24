@@ -9,6 +9,8 @@
 #include <list>
 #include <limits>
 #include <cmath>
+#include <iostream>
+#include <climits>
 using namespace std;
 
 template <class T> class Edge;
@@ -48,7 +50,7 @@ public:
 	int getIndegree() const;
 
 	void setArmazem(bool armazem);
-	void setVigilia();
+	void setPostoVigilia(bool vigilia);
 
 	bool operator<(const Vertex<T> vertex);
 
@@ -118,7 +120,7 @@ bool Vertex<T>::getpostoVigilia() const {
 }
 
 template <class T>
-void Vertex<T>::setpostoVigilia(bool vigilia){
+void Vertex<T>::setPostoVigilia(bool vigilia){
 	this->postoVigilia = vigilia;
 }
 
@@ -142,7 +144,7 @@ public:
 	friend class Graph<T>;
 	friend class Vertex<T>;
 
-	double getWeight();
+	double getWeight() const;
 	int getCobertura() const;
 
 	void setCobertura(int cobertura);
@@ -153,7 +155,7 @@ Edge<T>::Edge(Vertex<T> *d, double w): dest(d), weight(w){}
 
 
 template <class T>
-int Edge<T>::getWeight() const {
+double Edge<T>::getWeight() const {
 	return this->weight;
 }
 

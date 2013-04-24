@@ -33,6 +33,7 @@ class Vertex {
 	bool armazem;
 	bool postoVigilia;
 	int indegree;
+	bool visited;
 public:
 
 	Vertex(T in);
@@ -47,10 +48,12 @@ public:
 
 	bool getArmazem() const;
 	bool getpostoVigilia() const;
+	bool getVisited() const;
 	int getIndegree() const;
 
 	void setArmazem(bool armazem);
 	void setPostoVigilia(bool vigilia);
+	void setVisited(bool visited);
 
 	bool operator<(const Vertex<T> vertex);
 
@@ -109,6 +112,11 @@ bool Vertex<T>::getArmazem() const {
 }
 
 template <class T>
+bool Vertex<T>::getVisited() const {
+	return this->visited;
+}
+
+template <class T>
 int Vertex<T>::getIndegree() const {
 	return this->indegree;
 }
@@ -122,6 +130,11 @@ bool Vertex<T>::getpostoVigilia() const {
 template <class T>
 void Vertex<T>::setPostoVigilia(bool vigilia){
 	this->postoVigilia = vigilia;
+}
+
+template <class T>
+void Vertex<T>::setVisited(bool visited){
+	this->visited = visited;
 }
 
 template <class T>

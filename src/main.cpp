@@ -16,7 +16,8 @@ void readFromFile(ifstream &isG) {
 
 	while (!isG.eof()) {
 		getline(isG, tipo);
-		if (info == "vertice") {
+
+		if (tipo == "vertice") {
 			getline(isG, info);
 			getline(isG, armazem);
 			getline(isG, posto);
@@ -71,12 +72,37 @@ int main() {
 
 	readFromFile(isGraph);
 
-	/*  GraphViewer *gv = new GraphViewer(600, 600, true, 7772);
+	GraphViewer *gv = new GraphViewer(600, 600, true, 7772);
 
 	  gv->createWindow(600, 600);
 	  gv->defineEdgeColor("blue");
 	  gv->defineVertexColor("lightGray");
 
+
+	  vector<Vertex<int> *> vertices = myGraph.getVertexSet();
+
+	  for(int i =0; i < vertices.size(); i++){
+		  int c = vertices[i]->getInfo();
+		  gv->addNode(c);
+		  if(vertices[i]->getArmazem()){
+			  gv->setVertexColor(i+1, "blue");
+		  }
+	  }
+
+	  int arestas = 1;
+	  int origem, destino;
+	  for(int i =0; i < vertices.size(); i++){
+		  origem = vertices[i]->getInfo();
+		  vector<Edge<int> > adj2 = vertices[i]->getEdges();
+		  for(int c = 0; c < adj2.size(); c++){
+			  destino = adj2[c].getDest()->getInfo();
+			  gv->addEdge(arestas,origem,destino,EdgeType::UNDIRECTED);
+			  arestas++;
+		  }
+	  }
+
+
+	  /*
 	  gv->addNode(0);
 	  gv->addNode(1);
 	  gv->addNode(2);
@@ -90,9 +116,9 @@ int main() {
 	  gv->setEdgeThickness(1, 5);
 
 	  gv->setVertexColor(0, "green");
-
+*/
 	  gv->rearrange();
-
+/*
 	  GraphViewer *gv2 = new GraphViewer(600, 600, true, 7773);
 
 	  gv2->createWindow(600, 600);
@@ -115,10 +141,10 @@ int main() {
 
 	  gv2->rearrange();
 
-
+*/
 
 	  getchar();
-*/
+
 	return 0;
 
 }

@@ -40,6 +40,7 @@ public:
 	bool getpostoVigilia() const;
 	bool getVisited() const;
 	int getIndegree() const;
+	vector<Edge<T> > getEdges() const;
 
 	void setPostoVigilia(bool vigilia);
 	void setVisited(bool visited);
@@ -55,6 +56,11 @@ Vertex<T>::Vertex(T in, bool armazem, bool posto) :
 template<class T>
 T Vertex<T>::getInfo() const {
 	return this->info;
+}
+
+template<class T>
+vector<Edge<T> > Vertex<T>::getEdges() const {
+	return adj;
 }
 
 template<class T>
@@ -111,6 +117,7 @@ public:
 
 	double getWeight() const;
 	int getCobertura() const;
+	Vertex<T> * getDest() const;
 
 	void setCobertura(int cobertura);
 };
@@ -123,6 +130,11 @@ Edge<T>::Edge(Vertex<T> *d, double w) :
 template<class T>
 double Edge<T>::getWeight() const {
 	return this->weight;
+}
+
+template<class T>
+Vertex<T> * Edge<T>::getDest() const {
+	return this->dest;
 }
 
 template<class T>
@@ -187,6 +199,7 @@ template<class T>
 int Graph<T>::getNumVertex() const {
 	return vertexSet.size();
 }
+
 template<class T>
 vector<Vertex<T> *> Graph<T>::getVertexSet() const {
 	return vertexSet;

@@ -1,0 +1,41 @@
+vertice
+1	info do vertex
+0	bool se armazem
+0	bool se posto de vigilia
+vertice
+2	
+0
+0
+vertice
+3
+0
+0
+vertice
+4
+0
+0
+aresta
+1	vertice de origem
+2	vertice de destino
+aresta
+2
+3
+aresta
+3
+4
+aresta
+4
+1
+
+
+
+
+
+ 
+1.-------------2.
+l              l
+l              l
+l              l
+l              l
+3.-------------4.
+grafo resultante em que para cobrir seria um posto em 2 e 3

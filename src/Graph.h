@@ -45,7 +45,6 @@ public:
 	void setPostoVigilia(bool vigilia);
 	void setVisited(bool visited);
 
-
 };
 
 template<class T>
@@ -94,7 +93,6 @@ void Vertex<T>::setPostoVigilia(bool vigilia) {
 	this->postoVigilia = vigilia;
 }
 
-
 template<class T>
 void Vertex<T>::setVisited(bool visited) {
 	this->visited = visited;
@@ -105,7 +103,7 @@ void Vertex<T>::setVisited(bool visited) {
  * ================================================================================================
  */
 
- template<class T>
+template<class T>
 class Edge {
 	Vertex<T> * dest;
 	int weight;
@@ -119,12 +117,13 @@ public:
 	int getCobertura() const;
 	Vertex<T> * getDest() const;
 
-	void setCobertura(int cobertura);
+	void decCobertura();
 };
 
 template<class T>
 Edge<T>::Edge(Vertex<T> *d, double w) :
 		dest(d), weight(w) {
+	cobertura = weight;
 }
 
 template<class T>
@@ -138,8 +137,8 @@ Vertex<T> * Edge<T>::getDest() const {
 }
 
 template<class T>
-void Edge<T>::setCobertura(int cobertura) {
-	this->cobertura = cobertura;
+void Edge<T>::decCobertura() {
+	this->cobertura--;
 }
 
 template<class T>
@@ -152,10 +151,10 @@ int Edge<T>::getCobertura() const {
  * ================================================================================================
  */
 
-
- template<class T>
+template<class T>
 class Graph {
 	vector<Vertex<T> *> vertexSet;
+	vector<int> verticesMaiores; // diz quais os vertices que tem mais ruas por cobrir
 	void dfs(Vertex<T> *v, vector<T> &res) const;
 
 	//exercicio 5
@@ -170,6 +169,11 @@ public:
 	vector<T> dfs() const;
 	vector<Vertex<T> *> getVertexSet() const;
 	int getNumVertex() const;
+	void cobrirArmazens();
+	void verticesPrioritarios();
+	void adicionarPosto();
+	int verticeComMaisPrioridade(int verticeInfo);
+	void preencherVertice(int verticeInfo);
 
 	//exercicio 5
 	Vertex<T>* getVertex(const T &v) const;
@@ -229,6 +233,82 @@ bool Graph<T>::addVertex(const T &in, bool armazem, bool posto) {
 	return true;
 }
 
+template<class T>
+void Graph<T>::cobrirArmazens() {
+
+	typename vector<Vertex<T>*>::iterator it = vertexSet.begin();
+	typename vector<Vertex<T>*>::iterator ite = vertexSet.end();
+	for (; it != ite; it++) {
+		if ((*it)->getArmazem()) {
+			(*it)->setPostoVigilia(true);
+			for (int i = 0; i < (*it)->getEdges().size(); i++)
+				(*it)->getEdges()[i].decCobertura();
+		}
+	}
+}
+
+template<class T>
+int Graph<T>::verticeComMaisPrioridade(int verticeInfo) {
+
+
+	return verticeInfo;
+}
+
+template<class T>
+void Graph<T>::preencherVertice(int verticeInfo) {
+	typename vector<Vertex<T>*>::iterator it = vertexSet.begin();
+	typename vector<Vertex<T>*>::iterator ite = vertexSet.end();
+		for (; it != ite; it++) {
+			if((*it)->getInfo() == verticeInfo){
+				(*it)->setPostoVigilia(true);
+				for (int i = 0; i < (*it)->getEdges().size(); i++)
+					(*it)->getEdges()[i].decCobertura();
+				it = vertexSet.end();
+				break;									//saber se e preciso um ou outro, para sair quando encontrar vertice
+			}
+		}
+
+}
+
+template<class T>
+void Graph<T>::adicionarPosto() { //Esta funcao ve quais os vertices com mais arestas por preencher, qual e mais prioritario e coloca posto
+
+	verticesPrioritarios();
+
+	while (verticesMaiores.size() > 0) {
+		if (verticesMaiores.size() == 1)
+			preencherVertice(verticesMaiores[0]);
+		else
+			for (int i = 0; i < verticesMaiores.size(); i++) {
+				int verticePrioritario = verticeComMaisPrioridade(verticesMaiores[i]);
+				preencherVertice(verticePrioritario);
+			}
+
+	}
+}
+
+template<class T>
+void Graph<T>::verticesPrioritarios() { //FAZ RETURN DE UM VETOR DE VERTICES COM O MAIOR NUMERO DE ARESTAS DESCOBERTAS
+
+	int nRuasPorCobrir;
+	int maiorNumero = 0;
+	typename vector<Vertex<T>*>::iterator it = vertexSet.begin();
+	typename vector<Vertex<T>*>::iterator ite = vertexSet.end();
+	for (; it != ite; it++) {
+		nRuasPorCobrir = 0;
+		for (int i = 0; i < (*it)->getEdges().size(); i++)
+			if ((*it)->getEdges()[i].getCobertura() > 0)
+				nRuasPorCobrir++;
+
+		if (nRuasPorCobrir > maiorNumero) {
+			verticesMaiores.clear();
+			verticesMaiores.push_back((*it)->getInfo());
+			maiorNumero = nRuasPorCobrir;
+		} else if (nRuasPorCobrir == maiorNumero && nRuasPorCobrir != 0)
+			verticesMaiores.push_back((*it)->getInfo());
+	}
+
+}
 
 template<class T>
 bool Graph<T>::addEdge(const T &sourc, const T &dest, double w) {
@@ -332,6 +412,5 @@ void Graph<T>::dfsVisit(Vertex<T> *v) {
 	}
 	v->processing = false;
 }
-
 
 #endif /* GRAPH_H_ */

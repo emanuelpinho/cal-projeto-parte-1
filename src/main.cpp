@@ -45,20 +45,59 @@ void readFromFile(ifstream &isG) {
 			infoVertex1 = atoi(vertice1.c_str());
 			infoVertex2 = atoi(vertice2.c_str());
 
-			int weight = myGraph.edgeWeight(infoVertex1,infoVertex2);
+			int weight = myGraph.edgeWeight(infoVertex1, infoVertex2);
 
-			if(weight != 2)
+			if (weight != 2)
 				weight = 1;
 
-			myGraph.addEdge(infoVertex1,infoVertex2, weight);
-		}
-
-		else {
+			myGraph.addEdge(infoVertex1, infoVertex2, weight);
+		} else {
 			cout << "Ficheiro num formato errado";
 			exit(1);
 		}
 	}
 
+}
+
+void extractToViewer() {
+
+	GraphViewer *gv = new GraphViewer(600, 600, true, 7772);
+
+	gv->createWindow(600, 600);
+	gv->defineEdgeColor("blue");
+	gv->defineVertexColor("lightGray");
+
+	vector<Vertex<int> *> vertices = myGraph.getVertexSet();
+
+	for (int i = 0; i < vertices.size(); i++) {
+		int c = vertices[i]->getInfo();
+		gv->addNode(c);
+		if (vertices[i]->getArmazem()) {
+			gv->setVertexColor(i + 1, "blue");
+		}
+	}
+
+	int arestas = 1;
+	int origem, destino;
+	for (int i = 0; i < vertices.size(); i++) {
+		origem = vertices[i]->getInfo();
+		vector<Edge<int> > adj2 = vertices[i]->getEdges();
+		for (int c = 0; c < adj2.size(); c++) {
+			destino = adj2[c].getDest()->getInfo();
+			gv->addEdge(arestas, origem, destino, EdgeType::UNDIRECTED);
+			int weight = myGraph.edgeWeight(origem, destino);
+			if(weight == 2)
+				gv->setEdgeColor(arestas, "red");
+			else
+				gv->setEdgeColor(arestas, "yellow");
+			arestas++;
+		}
+
+		gv->rearrange();
+	}
+
+
+	getchar();
 }
 
 int main() {
@@ -71,79 +110,11 @@ int main() {
 	}
 
 	readFromFile(isGraph);
+	extractToViewer();
 
-	GraphViewer *gv = new GraphViewer(600, 600, true, 7772);
-
-	  gv->createWindow(600, 600);
-	  gv->defineEdgeColor("blue");
-	  gv->defineVertexColor("lightGray");
+	//myGraph.cobrirArmazens();
 
 
-	  vector<Vertex<int> *> vertices = myGraph.getVertexSet();
-
-	  for(int i =0; i < vertices.size(); i++){
-		  int c = vertices[i]->getInfo();
-		  gv->addNode(c);
-		  if(vertices[i]->getArmazem()){
-			  gv->setVertexColor(i+1, "blue");
-		  }
-	  }
-
-	  int arestas = 1;
-	  int origem, destino;
-	  for(int i =0; i < vertices.size(); i++){
-		  origem = vertices[i]->getInfo();
-		  vector<Edge<int> > adj2 = vertices[i]->getEdges();
-		  for(int c = 0; c < adj2.size(); c++){
-			  destino = adj2[c].getDest()->getInfo();
-			  gv->addEdge(arestas,origem,destino,EdgeType::UNDIRECTED);
-			  arestas++;
-		  }
-	  }
-
-
-	  /*
-	  gv->addNode(0);
-	  gv->addNode(1);
-	  gv->addNode(2);
-	  gv->addEdge(0, 0, 1, EdgeType::UNDIRECTED);
-	  gv->addEdge(3, 0, 1, EdgeType::UNDIRECTED);
-	  gv->addEdge(1, 0, 2, EdgeType::UNDIRECTED);
-	  gv->addEdge(2, 1, 2, EdgeType::DIRECTED);
-
-	  gv->setEdgeLabel(0, "Edge number 0");
-	  gv->setEdgeColor(1, "yellow");
-	  gv->setEdgeThickness(1, 5);
-
-	  gv->setVertexColor(0, "green");
-*/
-	  gv->rearrange();
-/*
-	  GraphViewer *gv2 = new GraphViewer(600, 600, true, 7773);
-
-	  gv2->createWindow(600, 600);
-	  gv2->defineEdgeColor("green");
-	  gv2->defineVertexColor("yellow");
-
-	  gv2->addNode(0);
-	  gv2->addNode(1);
-	  gv2->addNode(2);
-	  gv2->addEdge(0, 0, 1, EdgeType::UNDIRECTED);
-	  gv2->addEdge(3, 0, 1, EdgeType::UNDIRECTED);
-	  gv2->addEdge(1, 0, 2, EdgeType::UNDIRECTED);
-	  gv2->addEdge(2, 1, 2, EdgeType::DIRECTED);
-
-	  gv2->setEdgeLabel(0, "Edge number 0");
-	  gv2->setEdgeColor(1, "yellow");
-	  gv2->setEdgeThickness(1, 5);
-
-	  gv2->setVertexColor(0, "green");
-
-	  gv2->rearrange();
-
-*/
-
-	  getchar();
 
 	return 0;
 

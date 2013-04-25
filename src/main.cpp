@@ -40,23 +40,21 @@ void readFromFile(ifstream &isG) {
 
 		else if (tipo == "aresta") {
 
-			getline(isG,armazemAresta);
+			getline(isG, armazemAresta);
 			getline(isG, vertice1);
 			getline(isG, vertice2);
-
 
 			infoVertex1 = atoi(vertice1.c_str());
 			infoVertex2 = atoi(vertice2.c_str());
 			infoAresta = atoi(armazemAresta.c_str());
 
-
 			int weight = 1;
 
-			if (infoAresta == 1 )
+			if (infoAresta == 1)
 				weight = 2;
 
-
 			myGraph.addEdge(infoVertex1, infoVertex2, weight);
+
 		} else {
 			break;
 			cout << "Ficheiro num formato errado";
@@ -66,104 +64,75 @@ void readFromFile(ifstream &isG) {
 
 }
 
-/*void extractToViewer() {
-
-	GraphViewer *gv = new GraphViewer(600, 600, true, 7772);
-
-	gv->createWindow(600, 600);
-	gv->defineEdgeColor("blue");
-	gv->defineVertexColor("lightGray");
-
-	vector<Vertex<int> *> vertices = myGraph.getVertexSet();
-
-	for (int i = 0; i < vertices.size(); i++) {
-		int c = vertices[i]->getInfo();
-		gv->addNode(c);
-	}
-
-	int arestas = 1;
-	int origem, destino;
-	for (int i = 0; i < vertices.size(); i++) {
-		origem = vertices[i]->getInfo();
-		vector<Edge<int> > adj2 = vertices[i]->getEdges();
-		for (int c = 0; c < adj2.size(); c++) {
-			destino = adj2[c].getDest()->getInfo();
-			gv->addEdge(arestas, origem, destino, EdgeType::UNDIRECTED);
-			int weight = myGraph.edgeWeight(origem, destino);
-			if(weight == 2)
-				gv->setEdgeColor(arestas, "red");
-			else
-				gv->setEdgeColor(arestas, "blue");
-			arestas++;
-		}
-
-		gv->rearrange();
-	}
-
-
-	//getchar();
-}
-
-void extractFinal() {
-
-	GraphViewer *gv2 = new GraphViewer(600, 600, true, 7773);
-
-	gv2->createWindow(600, 600);
-	gv2->defineEdgeColor("blue");
-	gv2->defineVertexColor("lightGray");
-
-	vector<Vertex<int> *> vertices = myGraph.getVertexSet();
-
-	for (int i = 0; i < vertices.size(); i++) {
-		int c = vertices[i]->getInfo();
-		gv2->addNode(c);
-		if(vertices[i]->getpostoVigilia()){
-			gv2->setVertexColor(i + 1, "black");
-		}
-	}
-
-	int arestas = 1;
-	int origem, destino;
-	for (int i = 0; i < vertices.size(); i++) {
-		origem = vertices[i]->getInfo();
-		vector<Edge<int> > adj2 = vertices[i]->getEdges();
-		for (int c = 0; c < adj2.size(); c++) {
-			destino = adj2[c].getDest()->getInfo();
-			gv2->addEdge(arestas, origem, destino, EdgeType::UNDIRECTED);
-			int weight = myGraph.edgeWeight(origem, destino);
-			if(weight == 1)
-				gv2->setEdgeColor(arestas, "green");
-			else
-				gv2->setEdgeColor(arestas, "blue");
-			arestas++;
-		}
-
-		gv2->rearrange();
-	}
-
-
-
-}*/
-
 int main() {
+
+	cout
+			<< "                       Que mapa pretende fazer a cobertura?                     \n\n";
+	cout
+			<< "                       1 - Mapa com 5 quarteirões(2 com armazem)                 \n";
+	cout
+			<< "                       2 - Mapa com 5 quarteirões(sem armazens)                  \n";
+	cout
+			<< "                       3 - Mapa com 20 quarteirões (sem armazens)                 \n";
+	cout
+			<< "                       4 - Mapa com 20 quarteirões (com 5 armazens)               \n";
+	cout
+			<< "                       5 - Mapa com 50 quarteirões (com 12 armazens)              \n";
+	cout
+			<< "                       6 - SAIR                                                   \n\n\n";
+
+	int escolha;
+	cin >> escolha;
+	cin.clear();
+	cin.ignore(100, '\n');
 
 	ifstream isGraph("grafo.txt");
 
-	if (!isGraph) {
-		cout << "ERROR!";
+		if (!isGraph) {
+			cout << "ERROR!";
+			exit(1);
+		}
+	switch (escolha) {
+	case 1:
+
+		break;
+	case 2:
+
+		break;
+	case 3:
+
+		break;
+	case 4:
+
+		break;
+	case 5:
+
+		break;
+	case 6:
+
 		exit(1);
+	default:
+		cerr << "Opcao invalida\n";
+		break;
 	}
+
+
 
 	readFromFile(isGraph);
 	myGraph.extractToViewer();
 
 	myGraph.cobrirArmazens();
 
+	while(myGraph.arestasDescobertas()){
+		myGraph.adicionarPosto();
+
+	}
+
 	myGraph.extractFinal();
 
 
-	getchar();
 
+	getchar();
 
 	return 0;
 

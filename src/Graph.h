@@ -9,6 +9,7 @@
 #include <cmath>
 #include <iostream>
 #include <climits>
+#include "graphviewer.h"
 using namespace std;
 
 template<class T> class Edge;
@@ -107,23 +108,22 @@ template<class T>
 class Edge {
 	Vertex<T> * dest;
 	int weight;
-	int cobertura;
 public:
-	Edge(Vertex<T> *d, double w);
+	Edge(Vertex<T> *d, int w);
 	friend class Graph<T> ;
 	friend class Vertex<T> ;
 
 	double getWeight() const;
-	int getCobertura() const;
+	void setWeight(int peso);
+
+	void decWeight();
 	Vertex<T> * getDest() const;
 
-	void decCobertura();
 };
 
 template<class T>
-Edge<T>::Edge(Vertex<T> *d, double w) :
+Edge<T>::Edge(Vertex<T> *d, int w) :
 		dest(d), weight(w) {
-	cobertura = weight;
 }
 
 template<class T>
@@ -132,19 +132,25 @@ double Edge<T>::getWeight() const {
 }
 
 template<class T>
+void Edge<T>::setWeight(int peso) {
+	this->weight = peso;
+}
+
+template<class T>
+void Edge<T>::decWeight(){
+	cout << "\n\n\nAntes : " << weight;
+	int temp = this->weight;
+	temp--;
+	this->weight = temp;
+	cout << "\n\n\nDepois : " << weight;
+}
+
+template<class T>
 Vertex<T> * Edge<T>::getDest() const {
 	return this->dest;
 }
 
-template<class T>
-void Edge<T>::decCobertura() {
-	this->cobertura--;
-}
 
-template<class T>
-int Edge<T>::getCobertura() const {
-	return this->cobertura;
-}
 
 /* ================================================================================================
  * Class Graph
@@ -164,7 +170,7 @@ class Graph {
 
 public:
 	bool addVertex(const T &in, bool armazem, bool posto);
-	bool addEdge(const T &sourc, const T &dest, double w);
+	bool addEdge(const T &sourc, const T &dest, int w);
 	int edgeWeight(const T &sourc, const T &dest);
 	vector<T> dfs() const;
 	vector<Vertex<T> *> getVertexSet() const;
@@ -174,6 +180,8 @@ public:
 	void adicionarPosto();
 	int verticeComMaisPrioridade(int verticeInfo);
 	void preencherVertice(int verticeInfo);
+	void extractToViewer();
+	void extractFinal();
 
 	//exercicio 5
 	Vertex<T>* getVertex(const T &v) const;
@@ -185,24 +193,99 @@ public:
 
 template<class T>
 int Graph<T>::edgeWeight(const T &sourc, const T &dest) {
-	int c = 0;
 
 	typename vector<Vertex<T>*>::iterator it = vertexSet.begin();
-	typename vector<Vertex<T>*>::iterator ite = vertexSet.end();
-	for (; it != ite; it++) {
-		if ((*it)->info == sourc || (*it)->info == dest) {
-			if ((*it)->getArmazem())
-				c++;
+		typename vector<Vertex<T>*>::iterator ite = vertexSet.end();
+		for (; it != ite; it++) {
+			if ((*it)->info == sourc) {
+				for(int i = 0; i < (*it)->getEdges().size(); i++)
+				if (dest == (*it)->getEdges()[i].getDest()->getInfo()){
+					cout << "\n\nO caralho do tamanho e: " << (*it)->getEdges()[i].getWeight() << "\n\n";
+					return ((*it)->getEdges()[i].getWeight());
+				}
+			}
 		}
-	}
 
-	return c;
 }
 
 template<class T>
 int Graph<T>::getNumVertex() const {
 	return vertexSet.size();
 }
+
+template<class T>
+void Graph<T>::extractToViewer(){
+
+
+	GraphViewer *gv = new GraphViewer(600, 600, true, 7772);
+
+		gv->createWindow(600, 600);
+		gv->defineEdgeColor("blue");
+		gv->defineVertexColor("lightGray");
+
+
+		for (int i = 0; i < vertexSet.size(); i++) {
+			int c = vertexSet[i]->getInfo();
+			gv->addNode(c);
+		}
+
+		int arestas = 1;
+		int origem, destino;
+		for (int i = 0; i < vertexSet.size(); i++) {
+			origem = vertexSet[i]->getInfo();
+			for (int c = 0; c < vertexSet[i]->getEdges().size(); c++) {
+				destino = vertexSet[i]->getEdges()[c].getDest()->getInfo();
+				gv->addEdge(arestas, origem, destino, EdgeType::UNDIRECTED);
+				int weight = edgeWeight(origem, destino);
+				if(weight == 2)
+					gv->setEdgeColor(arestas, "red");
+				else
+					gv->setEdgeColor(arestas, "blue");
+				arestas++;
+			}
+
+			gv->rearrange();
+		}
+}
+
+template<class T>
+void Graph<T>::extractFinal(){
+
+
+	GraphViewer *gv2 = new GraphViewer(600, 600, true, 7773);
+
+		gv2->createWindow(600, 600);
+		gv2->defineEdgeColor("blue");
+		gv2->defineVertexColor("lightGray");
+
+
+		for (int i = 0; i < vertexSet.size(); i++) {
+			int c = vertexSet[i]->getInfo();
+			gv2->addNode(c);
+			if(vertexSet[i]->getpostoVigilia()){
+				gv2->setVertexColor(i + 1, "black");
+			}
+		}
+
+		int arestas = 1;
+		int origem, destino;
+		for (int i = 0; i < vertexSet.size(); i++) {
+			origem = vertexSet[i]->getInfo();
+			for (int c = 0; c < vertexSet[i]->getEdges().size(); c++) {
+				destino = vertexSet[i]->getEdges()[c].getDest()->getInfo();
+				gv2->addEdge(arestas, origem, destino, EdgeType::UNDIRECTED);
+				int weight = edgeWeight(origem, destino);
+				if(weight <= 0)
+					gv2->setEdgeColor(arestas, "green");
+				else
+					gv2->setEdgeColor(arestas, "blue");
+				arestas++;
+			}
+
+			gv2->rearrange();
+		}
+}
+
 
 template<class T>
 vector<Vertex<T> *> Graph<T>::getVertexSet() const {
@@ -241,8 +324,14 @@ void Graph<T>::cobrirArmazens() {
 	for (; it != ite; it++) {
 		if ((*it)->getArmazem()) {
 			(*it)->setPostoVigilia(true);
-			for (int i = 0; i < (*it)->getEdges().size(); i++)
-				(*it)->getEdges()[i].decCobertura();
+			for (int i = 0; i < (*it)->getEdges().size(); i++){
+				int peso = (*it)->getEdges()[i].getWeight();
+				peso--;
+				cout << "\n\nllololo: " << peso;
+				(*it)->getEdges()[i].setWeight(peso);
+				//(*it)->getEdges()[i].decWeight();
+				cout << "\n\nlalala: " << (*it)->getEdges()[i].getWeight();
+			}
 		}
 	}
 }
@@ -311,7 +400,7 @@ void Graph<T>::verticesPrioritarios() { //FAZ RETURN DE UM VETOR DE VERTICES COM
 }
 
 template<class T>
-bool Graph<T>::addEdge(const T &sourc, const T &dest, double w) {
+bool Graph<T>::addEdge(const T &sourc, const T &dest, int w) {
 	typename vector<Vertex<T>*>::iterator it = vertexSet.begin();
 	typename vector<Vertex<T>*>::iterator ite = vertexSet.end();
 	int found = 0;
